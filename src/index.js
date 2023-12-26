@@ -16,6 +16,10 @@ const editPopup = document.querySelector('.popup_type_edit');
 const formElement = editPopup.querySelector('.popup__form');
 const inputName = editPopup.querySelector('.popup__input_type_name');
 const inputDescription = editPopup.querySelector('.popup__input_type_description');
+const cardNameInput = newCardForm.querySelector('.popup__input_type_card-name');
+const cardLinkInput = newCardForm.querySelector('.popup__input_type_url');
+const profileTitlePlace = document.querySelector('.profile__title');
+const profileDescriptionPlace = document.querySelector('.profile__description');
 
 initialCards.forEach(card => cardsContainer.append(createCard(card, deleteCard, likeCard, openImage)));
 
@@ -37,18 +41,18 @@ addButton.addEventListener('click', function () {
 });
 
 newCardForm.addEventListener('submit', function (evt) {
-  addCard(evt, newCardForm, cardsContainer, createCard, deleteCard);
+  addCard(evt, cardNameInput, cardLinkInput, cardsContainer, createCard, deleteCard);
   closePopup(newPopup);
   newCardForm.reset();
 });
 
 editButton.addEventListener('click', editButtonClick); 
 
-function addCard(evt, formElement, cardsContainer, createCardFunc, deleteCardFunc) {
+function addCard(evt, cardNameInput, cardLinkInput, cardsContainer, createCardFunc, deleteCardFunc) {
   evt.preventDefault();
 
-  const nameInput = formElement.querySelector('.popup__input_type_card-name').value;
-  const linkInput = formElement.querySelector('.popup__input_type_url').value;
+  const nameInput = cardNameInput.value;
+  const linkInput = cardLinkInput.value;
   const newCardData = { name: nameInput, link: linkInput };
   const newCardElement = createCardFunc(newCardData, deleteCardFunc, likeCard, openImage);
 
@@ -63,10 +67,9 @@ function openImage(card) {
   openPopup(imagePopup);
 }
 
-
 function editButtonClick() {
-  const profileTitle = document.querySelector('.profile__title').textContent;
-  const profileDescription = document.querySelector('.profile__description').textContent;
+  const profileTitle = profileTitlePlace.textContent;
+  const profileDescription = profileDescriptionPlace.textContent;
 
   inputName.value = profileTitle;
   inputDescription.value = profileDescription;
@@ -75,14 +78,13 @@ function editButtonClick() {
 
 formElement.addEventListener('submit', editFormSubmit);
 
-
 function editFormSubmit(evt) {
   evt.preventDefault();
 
   const nameInput = inputName.value;
   const jobInput = inputDescription.value;
 
-  document.querySelector('.profile__title').textContent = nameInput;
-  document.querySelector('.profile__description').textContent = jobInput;
+  profileTitlePlace.textContent = nameInput;
+  profileDescriptionPlace.textContent = jobInput;
   closePopup(editPopup);
 }
