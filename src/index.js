@@ -2,6 +2,7 @@ import './pages/index.css';
 import initialCards from './cards.js';
 import { createCard, deleteCard, likeCard } from './components/card.js';
 import { openPopup, closePopup, closeEscape } from './components/modal.js';
+import {enableValidation, clearValidation } from './components/validation.js';
 
 const container = document.querySelector('.content');
 const cardsContainer = container.querySelector('.places__list');
@@ -20,6 +21,14 @@ const cardNameInput = newCardForm.querySelector('.popup__input_type_card-name');
 const cardLinkInput = newCardForm.querySelector('.popup__input_type_url');
 const profileTitlePlace = document.querySelector('.profile__title');
 const profileDescriptionPlace = document.querySelector('.profile__description');
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
 
 initialCards.forEach(card => cardsContainer.append(createCard(card, deleteCard, likeCard, openImage)));
 
@@ -37,6 +46,8 @@ document.querySelectorAll('.popup').forEach( popup => {
 });
 
 addButton.addEventListener('click', function () {
+  newCardForm.reset();
+  clearValidation(newPopup, validationConfig);
   openPopup(newPopup);
 });
 
@@ -44,6 +55,7 @@ newCardForm.addEventListener('submit', function (evt) {
   addCard(evt, cardNameInput, cardLinkInput, cardsContainer, createCard, deleteCard);
   closePopup(newPopup);
   newCardForm.reset();
+  clearValidation(newPopup, validationConfig);
 });
 
 editButton.addEventListener('click', editButtonClick); 
@@ -73,6 +85,7 @@ function editButtonClick() {
 
   inputName.value = profileTitle;
   inputDescription.value = profileDescription;
+  clearValidation(editPopup, validationConfig);
   openPopup(editPopup);
 }
 
@@ -88,3 +101,5 @@ function editFormSubmit(evt) {
   profileDescriptionPlace.textContent = jobInput;
   closePopup(editPopup);
 }
+
+enableValidation(validationConfig); 
