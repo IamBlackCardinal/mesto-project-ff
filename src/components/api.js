@@ -6,34 +6,25 @@ const config = {
   }
 }
 
+const handleResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка: ${res.status}`);
+};
+
 export const getInitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(handleResponse);
 }
 
 export const profileData = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(handleResponse);
 }
 
 export const updateProfileData = (name, about) => {
@@ -45,15 +36,7 @@ export const updateProfileData = (name, about) => {
       about: about
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log('Ошибка при обновлении профиля: ', err);
-  });
+  .then(handleResponse);
 }
 
 export const addNewCard = (name, link) => {
@@ -65,15 +48,7 @@ export const addNewCard = (name, link) => {
       link: link
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log('Ошибка при добавлении новой карточки: ', err);
-  });
+  .then(handleResponse);
 }
 
 export const updateAvatar = (avatarUrl) => {
@@ -84,75 +59,22 @@ export const updateAvatar = (avatarUrl) => {
       avatar: avatarUrl
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log('Ошибка при обновлении аватара: ', err);
-  });
+  .then(handleResponse);
 }
 
-export const deleteCard = (cardId, cardElement) => {
-  fetch (`${config.baseUrl}/cards/${cardId}`, {
+export const deleteCardApi = (cardId) => {
+  return fetch (`${config.baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      cardElement.remove();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log('Ошибка при удалении карточки: ', err);
-  });
+  .then(handleResponse);
 }
 
-export const likeCard = (likeElement, cardId) => {
-  const isLiked = likeElement.classList.contains('card__like-button_is-active');
-
-  if (isLiked) {
-    fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-      method: 'DELETE',
-      headers: config.headers
+export const likeCardApi = (cardId, isLiked) => {
+  const likeMethod = isLiked ? 'DELETE' : 'PUT';
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, { 
+      method: likeMethod, 
+      headers: config.headers 
     })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .then((cardData) => {
-      likeElement.classList.toggle('card__like-button_is-active');
-      const likeCountElement = likeElement.closest('.card').querySelector('.card__like-count');
-      likeCountElement.textContent = cardData.likes.length;
-      isLiked = !isLiked;
-    })
-    .catch((err) => {
-      console.log('Ошибка при лайке: ', err);
-    });
-  } else {
-    fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-      method: 'PUT',
-      headers: config.headers
-    })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .then((cardData) => {
-      likeElement.classList.toggle('card__like-button_is-active');
-      const likeCountElement = likeElement.closest('.card').querySelector('.card__like-count');
-      likeCountElement.textContent = cardData.likes.length;
-      isLiked = !isLiked;
-    })
-    .catch((err) => {
-      console.log('Ошибка при лайке: ', err);
-    });
-  }
+  .then(handleResponse);
 }

@@ -6,13 +6,13 @@ export const enableValidation = (settings) => {
   });
 };
 
-export const clearValidation = (popup, settings) => {
-  const formElement = popup.querySelector(settings.formSelector);
+export const clearValidation = (formElement, settings) => {
   const inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
   const buttonElement = formElement.querySelector(settings.submitButtonSelector);
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, settings);
   });
+  formElement.reset();
   toggleButtonState(inputList, buttonElement, settings);
 };
 
@@ -49,14 +49,14 @@ const hasInvalidInput = (inputList) => {
   })
 };
 
-const isInputEmpty = (inputList) => {
-  return inputList.every((inputElement) => {
-    return inputElement.value === '';
-  });
-};
+// const isInputEmpty = (inputList) => {
+//   return inputList.every((inputElement) => {
+//     return inputElement.value === '';
+//   });
+// };
 
 const toggleButtonState = (inputList, buttonElement, settings) => {
-  if (hasInvalidInput(inputList) || isInputEmpty(inputList)) {
+  if (hasInvalidInput(inputList)) {
     buttonElement.disabled = true;
     buttonElement.classList.add(settings.inactiveButtonClass);
   } else {
